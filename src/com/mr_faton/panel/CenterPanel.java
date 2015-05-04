@@ -1,10 +1,15 @@
-package net.mr_faton.Different_Things.photo_sorter.panel;
+package com.mr_faton.panel;
+
+import com.mr_faton.statements.Constants;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Created by Mr_Faton on 03.05.2015.
@@ -19,6 +24,8 @@ public final class CenterPanel extends JPanel {
     private JButton openInputButton;
     private JButton openOutputButton;
     private JFileChooser dirChooser;
+    private String inputDirPath;
+    private String outputDirPath;
 
     public static CenterPanel getInstance() {
         if (centerPanel == null) {
@@ -27,20 +34,34 @@ public final class CenterPanel extends JPanel {
         return centerPanel;
     }
 
-    public CenterPanel() {
-        panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 2, 5, 5));
-        dirChooser = new JFileChooser();
-        dirChooser.setCurrentDirectory(new File("."));
-        dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    private CenterPanel() {
+        panel = new JPanel(new GridLayout(2, 1, 0, 15));
 
+        dirChooser = new JFileChooser();
+        dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         dirChooser.setAcceptAllFileFilterUsed(false);//disable the "All files" option.
+
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(Constants.FILE_settings_file));
+            inputDirPath = properties.getProperty(Constants.KEY_inputDir);
+            outputDirPath = properties.getProperty(Constants.KEY_outputDir);
+            if (inputDirPath == null || outputDirPath == null || inputDirPath.length() < 1 || outputDirPath.length() < 1) {
+                throw new IOException();
+            }
+            dirChooser.setCurrentDirectory(new File(outputDirPath));
+        } catch (IOException e) {
+            //значит файла с настройками нет
+            inputDirPath = "";
+            outputDirPath = "";
+            dirChooser.setCurrentDirectory(new File("."));
+        }
 
         inputDirLabel = new JLabel("Папка из которой берём файлы:", JLabel.LEFT);
         outputDirLabel = new JLabel("Корневая папка альбома:", JLabel.LEFT);
 
-        inputDirField = new JTextField();
-        outputDirField = new JTextField();
+        inputDirField = new JTextField(inputDirPath);
+        outputDirField = new JTextField(outputDirPath);
 
         openInputButton = new JButton("Открыть");
         openInputButton.addActionListener(new ActionListener() {
@@ -64,14 +85,24 @@ public final class CenterPanel extends JPanel {
             }
         });
 
-        panel.add(inputDirLabel);
-        panel.add(new JLabel());
-        panel.add(inputDirField);
-        panel.add(openInputButton);
-        panel.add(outputDirLabel);
-        panel.add(new Label());
-        panel.add(outputDirField);
-        panel.add(openOutputButton);
+        JPanel inputPanel = new JPanel(new GridLayout(2, 1));
+        JPanel inputFieldAndButtonPanel = new JPanel();
+        inputFieldAndButtonPanel.setLayout(new BorderLayout(7, 0));
+        inputFieldAndButtonPanel.add(inputDirField, BorderLayout.CENTER);
+        inputFieldAndButtonPanel.add(openInputButton, BorderLayout.EAST);
+        inputPanel.add(inputDirLabel);
+        inputPanel.add(inputFieldAndButtonPanel);
+
+        JPanel outputPanel = new JPanel(new GridLayout(2, 1));
+        JPanel outputFieldAndButtonPanel = new JPanel();
+        outputFieldAndButtonPanel.setLayout(new BorderLayout(7, 0));
+        outputFieldAndButtonPanel.add(outputDirField, BorderLayout.CENTER);
+        outputFieldAndButtonPanel.add(openOutputButton, BorderLayout.EAST);
+        outputPanel.add(outputDirLabel);
+        outputPanel.add(outputFieldAndButtonPanel);
+
+        panel.add(inputPanel);
+        panel.add(outputPanel);
     }
 
     private String chooseFolder(String title) {

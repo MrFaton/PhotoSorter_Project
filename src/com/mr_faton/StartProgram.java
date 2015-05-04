@@ -1,6 +1,6 @@
-package net.mr_faton.Different_Things.photo_sorter;
+package com.mr_faton;
 
-import net.mr_faton.Different_Things.photo_sorter.fraim.MainFrame;
+import com.mr_faton.fraim.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +21,7 @@ public class StartProgram {
             public void run() {
                 mainFrame.setTitle("Tro-lo-lo");
                 mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//                mainFrame.pack();
                 mainFrame.setVisible(true);
             }
         });
