@@ -37,8 +37,13 @@ public class SouthPanel {
         handleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                HandleButtonHandler handleButtonHandler = new HandleButtonHandler();
-                handleButtonHandler.handle();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        HandleButtonHandler handleButtonHandler = new HandleButtonHandler();
+                        handleButtonHandler.handle();
+                    }
+                }).start();
             }
         });
 

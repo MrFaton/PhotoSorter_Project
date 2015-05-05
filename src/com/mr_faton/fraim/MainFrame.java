@@ -6,7 +6,6 @@ import com.mr_faton.panel.SouthPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
 
 /**
  * Created by Mr_Faton on 03.05.2015.
@@ -31,9 +30,9 @@ public final class MainFrame extends JFrame {
 //        setResizable(false);
 
         //внутри пакета храниться иконка фрейма, этот блок нужен чтобы получить к ней путь (получить иконку)
-        URL iconURL = getClass().getResource("/com/mr_faton/resources/frameIcon.png");
-        Image frameIcon = new ImageIcon(iconURL).getImage();
-        setIconImage(frameIcon);
+//        URL iconURL = getClass().getResource("/com/mr_faton/resources/frameIcon.png");
+//        Image frameIcon = new ImageIcon(iconURL).getImage();
+//        setIconImage(frameIcon);
 
         add(NorthPanel.getInstance().getPanel(), BorderLayout.NORTH);
         add(CenterPanel.getInstance().getPanel(), BorderLayout.CENTER);
