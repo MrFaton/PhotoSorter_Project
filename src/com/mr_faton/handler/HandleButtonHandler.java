@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -55,12 +56,12 @@ public final class HandleButtonHandler {
                 updateProgressBar();
             }
 
-            System.out.println("Done");
-            System.out.println("totalFoundFiles=" + totalFoundFiles);
-            System.out.println("totalCopiedFiles=" + totalCopiedFiles);
-            System.out.println("duplicates=" + duplicatesFileList.size());
-            System.out.println("duplicates Files =" + duplicatesFileList);
+            if (duplicatesFileList.size() > 0) {
+                saveDuplicates();
+            }
 
+            showDoneMessage();
+            southPanel.unlockHandleButton();
         } catch (IllegalArgumentException ex) {
             //NOP
             /*
@@ -74,7 +75,6 @@ public final class HandleButtonHandler {
             return;
         }
     }
-
 
     private void saveDirs() throws IOException {
         sourceDir = centerPanel.getInputDir();
@@ -193,12 +193,27 @@ public final class HandleButtonHandler {
         southPanel.setProgressBarValue(status);
     }
 
+    private void saveDuplicates() {
+        try(PrintWriter writer = new PrintWriter(new FileOutputStream(destDir + "\\Дублекаты.txt"))){
+            for (File duplicate : duplicatesFileList) {
+                writer.println(duplicate.toString());
+            }
+        } catch (IOException ex) {
+            showErrorMessage(ex.getMessage());
+        }
+    }
+
+    private void showDoneMessage() {
+        String message = "Всего было найдено файлов: " + totalFoundFiles + "\n" +
+                "Всего было скопированно файлов: " + totalCopiedFiles + "\n" +
+                "Всего было найдено дублекатов: " + duplicatesFileList.size() + "\n" +
+                "Список дублекатов находится в файле \"Дублекаты.txt\" по адресу:" + "\n" +
+                '"' + destDir + "\\Дублекаты.txt\"";
+        JOptionPane.showMessageDialog(StartProgram.mainFrame, message, "Выполненно!", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     private void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(StartProgram.mainFrame, message, "Ошибка!", JOptionPane.ERROR_MESSAGE);
     }
 }
 
-class Test {
-    public static void main(String[] args) {
-    }
-}
