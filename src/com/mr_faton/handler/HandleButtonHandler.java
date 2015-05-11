@@ -44,8 +44,9 @@ public final class HandleButtonHandler {
             saveDirs();
             fileList = new LinkedList<>();
             duplicatesFileList = new LinkedList<>();
-            southPanel.setProgressBarVisible(true);
             collectAllFiles(new File(sourceDir));
+            southPanel.setProgressBarVisible(true);
+            southPanel.clickableHandleButton(false);
             for (File sourceFile : fileList) {
                 Map<String, String> fileNameAndFileDirMap = getFileNameAndFileDir(sourceFile);
                 String destFileDir = fileNameAndFileDirMap.get(Constants.KEY_filePath);
@@ -61,7 +62,7 @@ public final class HandleButtonHandler {
             }
 
             showDoneMessage();
-            southPanel.unlockHandleButton();
+            southPanel.clickableHandleButton(true);
         } catch (IllegalArgumentException ex) {
             //NOP
             /*
@@ -94,7 +95,10 @@ public final class HandleButtonHandler {
         properties.store(new FileOutputStream(Constants.FILE_settings_file), "Directories");
     }
 
-    private void collectAllFiles(File dir) {
+    private void collectAllFiles(File dir) throws IOException{
+        if (!dir.exists()) {
+            throw new IOException("Папка-источник фотографйий не существует!\nНужно выбрать папку откуда берём фото.");
+        }
         File[] files = dir.listFiles();
         for (File file : files) {
             if (file.isFile()) {
@@ -171,7 +175,7 @@ public final class HandleButtonHandler {
         String name = file.getName();
         int position = name.lastIndexOf('.');
         if (position > 0) {
-            return name.substring(position + 1).toLowerCase();
+            return name.substring(position + 1);
         }
         return "";
     }
@@ -204,11 +208,15 @@ public final class HandleButtonHandler {
     }
 
     private void showDoneMessage() {
-        String message = "Всего было найдено файлов: " + totalFoundFiles + "\n" +
-                "Всего было скопированно файлов: " + totalCopiedFiles + "\n" +
-                "Всего было найдено дублекатов: " + duplicatesFileList.size() + "\n" +
-                "Список дублекатов находится в файле \"Дублекаты.txt\" по адресу:" + "\n" +
-                '"' + destDir + "\\Дублекаты.txt\"";
+        String message = "Найдено файлов: " + totalFoundFiles + " шт\n" +
+                "Скопированно файлов: " + totalCopiedFiles + " шт";
+        if (duplicatesFileList.size() > 0) {
+            message = message +
+                    "\nНайдено дублекатов: " + duplicatesFileList.size() + " шт\n" +
+                    "Список дублекатов находится в файле \"Дублекаты.txt\"\n" +
+                    "по адресу: \"" + destDir + "\\Дублекаты.txt\"";
+        }
+
         JOptionPane.showMessageDialog(StartProgram.mainFrame, message, "Выполненно!", JOptionPane.INFORMATION_MESSAGE);
     }
 

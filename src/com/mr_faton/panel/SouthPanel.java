@@ -44,7 +44,6 @@ public class SouthPanel {
                         handleButtonHandler.handle();
                     }
                 }).start();
-                handleButton.setEnabled(false);
             }
         });
 
@@ -65,8 +64,8 @@ public class SouthPanel {
         progressBar.setValue(value);
     }
 
-    public void unlockHandleButton() {
-        handleButton.setEnabled(true);
+    public void clickableHandleButton(boolean isClickable) {
+        handleButton.setEnabled(isClickable);
     }
 
     public JPanel getPanel() {
